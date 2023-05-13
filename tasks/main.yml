@@ -1,0 +1,29 @@
+---
+- name: Install nginx
+  ansible.builtin.apt:
+    name: [ 'nginx' ]
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+
+- name: Allow http
+  community.general.ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+  become: yes
+
+- name: Allow https
+  community.general.ufw:
+    rule: allow
+    port: 443
+    proto: tcp
+  become: yes
+
+- name: Upload nginx config
+  ansible.builtin.copy:
+    src: ./files/nginx.conf
+    dest: /etc/nginx/.
+  become: yes
+  notify: Reload nginx
